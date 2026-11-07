@@ -1,83 +1,145 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { api, Project, errorMessage } from './lib/api'
+import HomePage from './pages/HomePage'
+import ProjectsPage from './pages/ProjectsPage'
+import WizardPage from './pages/WizardPage'
+import PlanningPage from './pages/PlanningPage'
+import ReaderPage from './pages/ReaderPage'
 import './App.css'
 
-function App() {
-  const [topic, setTopic] = useState('')
-  const [grade, setGrade] = useState('')
-  const [subject, setSubject] = useState('')
+type Page = 'home' | 'projects' | 'wizard' | 'planning' | 'reader'
 
-  const handleGenerate = () => {
-    if (!topic || !grade || !subject) {
-      alert('请填写完整信息')
-      return
+function App() {
+  const [page, setPage] = useState<Page>('home')
+  const [currentProject, setCurrentProject] = useState<Project | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    // 检查URL参数恢复状态
+    const params = new URLSearchParams(window.location.search)
+    const projectId = params.get('project')
+    if (projectId) {
+      loadProject(projectId)
     }
-    console.log('生成教材:', { topic, grade, subject })
+  }, [])
+
+  async function loadProject(id: string) {
+    setLoading(true)
+    setError(null)
+    try {
+      const project = await api.getProject(id)
+      setCurrentProject(project)
+      if (project.status === 'draft') {
+        setPage('wizard')
+      } else if (project.status === 'planning') {
+        setPage('planning')
+      } else {
+        setPage('reader')
+      }
+    } catch (err) {
+      setError(errorMessage(err))
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  function navigateTo(newPage: Page, project?: Project) {
+    if (project) {
+      setCurrentProject(project)
+      window.history.pushState({}, '', `?project=${project.id}`)
+    }
+    setPage(newPage)
+    setError(null)
+  }
+
+  function goHome() {
+    setCurrentProject(null)
+    window.history.pushState({}, '', '/')
+    setPage('home')
+    setError(null)
+  }
+
+  if (loading) {
+    return (
+      <div className="app-loading">
+        <div className="spinner"></div>
+        <p>加载中...</p>
+      </div>
+    )
   }
 
   return (
     <div className="app">
       <header className="app-header">
-        <h1>AutoTextbook</h1>
-        <p className="subtitle">AI自动教材生成工具</p>
+        <div className="header-content">
+          <h1 className="logo" onClick={goHome} style={{ cursor: 'pointer' }}>
+            📚 课本工坊
+          </h1>
+          <nav className="header-nav">
+            <button
+              className={page === 'home' ? 'active' : ''}
+              onClick={() => navigateTo('home')}
+            >
+              首页
+            </button>
+            <button
+              className={page === 'projects' ? 'active' : ''}
+              onClick={() => navigateTo('projects')}
+            >
+              我的教材
+            </button>
+            {currentProject && (
+              <span className="current-project">
+                {currentProject.name}
+              </span>
+            )}
+          </nav>
+        </div>
       </header>
 
-      <main className="app-main">
-        <div className="form-container">
-          <h2>生成教材</h2>
-          
-          <div className="form-group">
-            <label htmlFor="subject">学科</label>
-            <select 
-              id="subject" 
-              value={subject} 
-              onChange={(e) => setSubject(e.target.value)}
-            >
-              <option value="">请选择学科</option>
-              <option value="math">数学</option>
-              <option value="chinese">语文</option>
-              <option value="english">英语</option>
-              <option value="physics">物理</option>
-              <option value="chemistry">化学</option>
-              <option value="biology">生物</option>
-              <option value="history">历史</option>
-              <option value="geography">地理</option>
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="grade">学段</label>
-            <select 
-              id="grade" 
-              value={grade} 
-              onChange={(e) => setGrade(e.target.value)}
-            >
-              <option value="">请选择学段</option>
-              <option value="elementary">小学</option>
-              <option value="middle">初中</option>
-              <option value="high">高中</option>
-              <option value="university">大学</option>
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="topic">主题/章节</label>
-            <input
-              id="topic"
-              type="text"
-              value={topic}
-              onChange={(e) => setTopic(e.target.value)}
-              placeholder="例如：二次函数、唐诗鉴赏、牛顿运动定律..."
-            />
-          </div>
-
-          <button className="generate-btn" onClick={handleGenerate}>
-            生成教材
-          </button>
+      {error && (
+        <div className="error-banner">
+          <span>{error}</span>
+          <button onClick={() => setError(null)}>关闭</button>
         </div>
+      )}
+
+      <main className="app-main">
+        {page === 'home' && <HomePage onStart={() => navigateTo('wizard')} />}
+        {page === 'projects' && (
+          <ProjectsPage
+            onSelectProject={(p) => loadProject(p.id)}
+            onCreateNew={() => navigateTo('wizard')}
+          />
+        )}
+        {page === 'wizard' && (
+          <WizardPage
+            project={currentProject}
+            onComplete={(p) => {
+              setCurrentProject(p)
+              navigateTo('planning', p)
+            }}
+            onBack={goHome}
+          />
+        )}
+        {page === 'planning' && currentProject && (
+          <PlanningPage
+            project={currentProject}
+            onStartGenerate={(p) => {
+              setCurrentProject(p)
+              navigateTo('reader', p)
+            }}
+            onBack={() => navigateTo('wizard', currentProject)}
+          />
+        )}
+        {page === 'reader' && currentProject && (
+          <ReaderPage project={currentProject} />
+        )}
       </main>
 
       <footer className="app-footer">
-        <p>2026 Qoder 高校创造力大赛参赛作品</p>
+        <p>2026 Qoder 高校创造力大赛 · StudyHack 赛道</p>
       </footer>
     </div>
   )

@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "name": "课本工坊",
+  "actionId": "c659036b-0c36-4739-9092-be2370fef096",
+  "projectId": "01a1b4d7-e12d-76cc-95d0-bba0cd47bb10",
+  "siteId": "01a1b4d7-e12e-7400-99a0-f49d671becbe",
+  "deploymentId": "01a1b4dd-2a76-70c3-aa44-aae3771577a6",
+  "artifactSha256": "bfaaa60385e6058ece8e4c58db19333c51c36577c9befddd5d790ecdca5363c2",
+  "indexSha256": "2f60167f3cae8b79203e3b058279365c985e7fa438de83241815788780d86fcd",
+  "indexHtml": "PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9InpoLUNOIj4KICA8aGVhZD4KICAgIDxtZXRhIGNoYXJzZXQ9IlVURi04IiAvPgogICAgPGxpbmsgcmVsPSJpY29uIiB0eXBlPSJpbWFnZS9zdmcreG1sIiBocmVmPSIvdml0ZS5zdmciIC8+CiAgICA8bWV0YSBuYW1lPSJ2aWV3cG9ydCIgY29udGVudD0id2lkdGg9ZGV2aWNlLXdpZHRoLCBpbml0aWFsLXNjYWxlPTEuMCIgLz4KICAgIDx0aXRsZT7or77mnKzlt6XlnYogLSBBSeiHquWKqOaVmeadkOeUn+aIkOW3peWFtzwvdGl0bGU+CiAgICA8bWV0YSBuYW1lPSJkZXNjcmlwdGlvbiIgY29udGVudD0i5oqK6Zu25pWj6K++5Lu25Y+Y5oiQ57O757uf5pWZ5p2Q44CC5LiK5Lyg5a2m5Lmg6LWE5paZ77yMQUnluK7kvaDmlbTnkIbmiJDmnInpgLvovpHjgIHmnInlm77op6PjgIHmnInnu4PkuaDnmoTkuKrkurrmlZnmnZDjgIIiIC8+CiAgICA8c2NyaXB0IHR5cGU9Im1vZHVsZSIgY3Jvc3NvcmlnaW4gc3JjPSIvYXNzZXRzL2luZGV4LU9WUnBLZ01mLmpzIj48L3NjcmlwdD4KICAgIDxsaW5rIHJlbD0ic3R5bGVzaGVldCIgY3Jvc3NvcmlnaW4gaHJlZj0iL2Fzc2V0cy9pbmRleC0xSXVGcDlzWi5jc3MiPgogIDwvaGVhZD4KICA8Ym9keT4KICAgIDxkaXYgaWQ9InJvb3QiPjwvZGl2PgogIDwvYm9keT4KPC9odG1sPgo=",
+  "releaseId": "01a1b4dd-d1f5-734a-80c9-c3aa998e2268"
+}
